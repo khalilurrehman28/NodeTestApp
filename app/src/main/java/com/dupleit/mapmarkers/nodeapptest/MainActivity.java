@@ -1,5 +1,6 @@
 package com.dupleit.mapmarkers.nodeapptest;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -24,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.dupleit.mapmarkers.nodeapptest.Service.ServiceTest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -39,6 +41,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     Button button,galleryBtn;
+    int count = 0;
     ImageView textView;
     private static final int GALLERY_REQUEST = 100;
     private static final int REQUEST= 112;
@@ -50,7 +53,9 @@ public class MainActivity extends AppCompatActivity {
         button = findViewById(R.id.button);
         galleryBtn = findViewById(R.id.galleryBtn);
 
-        socketConn = new Client("192.168.0.15", 1234);
+        socketConn = new Client("192.168.0.7", 1234);
+        startService(new Intent(this, ServiceTest.class));
+
         textView = findViewById(R.id.textView);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Glide.with(this).load("http://192.168.0.15:3200/users/image/838605bcf04ea3871ec4bca10dfc2868.jpg").into(textView);
+       // Glide.with(this).load("http://192.168.0.7:1234/users/image/838605bcf04ea3871ec4bca10dfc2868.jpg").into(textView);
 
         galleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,15 +262,16 @@ public class MainActivity extends AppCompatActivity {
             mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             mNotificationManager.createNotificationChannel(mChannel);
         }else{*/
+        Notification.InboxStyle inboxStyle = new Notification.InboxStyle();
         long[] pattern = {0, 100, 1000};
             // The id of the channel.
-                int count = 0;
+
                 String CHANNEL_ID = "my_channel_01";
                 NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.smartphone)
-                .setContentTitle(userName)
-                .setContentText(UserMessage)
-                .setNumber(count)
+                .setContentTitle(UserMessage)
+                .setContentText(userName)
+               // .setNumber(count++)
                 .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                 // Creates an explicit intent for an Activity in your app
                 Intent resultIntent = new Intent(this, Main2Activity.class);
@@ -282,13 +288,14 @@ public class MainActivity extends AppCompatActivity {
                 PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
                 mBuilder.setContentIntent(resultPendingIntent);
+                mBuilder.setContentText(UserMessage).setNumber(++count);
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
                 // mNotificationId is a unique integer your app uses to identify the
                 // notification. For example, to cancel the notification, you can pass its ID
                 // number to NotificationManager.cancel().
-
-                mNotificationManager.notify(id, mBuilder.build());
+               /* inboxStyle.setBigContentTitle("Enter Content Text");
+                inboxStyle.addLine("hi events "+(count++));*/
+                mNotificationManager.notify("Node App",5, mBuilder.build());
 
             //  That's it. Your user has now been notified.
 
